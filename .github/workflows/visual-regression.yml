@@ -13,6 +13,12 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      refresh_baselines:
+        description: 'Explicitly regenerate approved browser baselines after reviewing visual changes'
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: write
@@ -37,6 +43,9 @@ jobs:
           if [ ! -d tests/visual/feature-card.spec.ts-snapshots ]; then
             npx playwright test --update-snapshots
           fi
+      - name: Refresh browser snapshots when explicitly requested
+        if: github.event_name == 'workflow_dispatch' && inputs.refresh_baselines == true && github.ref == 'refs/heads/main'
+        run: npx playwright test --update-snapshots
       - name: Compare against approved repository snapshots
         run: npx playwright test
       - name: Upload visual diff report
