@@ -12,12 +12,17 @@
     "test": "vitest run",
     "screenshots": "node scripts/screenshots.mjs",
     "test:visual": "playwright test",
-    "test:visual:update": "playwright test --update-snapshots"
+    "test:visual:update": "playwright test --update-snapshots",
+    "fidelity:capture": "node scripts/fidelity.mjs capture",
+    "fidelity:verify": "node scripts/fidelity.mjs verify",
+    "fidelity:measure": "node scripts/fidelity.mjs measure",
+    "fidelity:approve": "node scripts/approve-figma-references.mjs"
   },
   "dependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "lucide-react": "^0.468.0"
+    "lucide-react": "^0.468.0",
+    "@fontsource/inter": "5.3.0"
   },
   "devDependencies": {
     "@storybook/addon-a11y": "^8.6.0",
@@ -34,6 +39,9 @@
     "vite": "^6.0.0",
     "vitest": "^2.1.0",
     "playwright": "^1.58.0",
-    "@playwright/test": "^1.58.0"
+    "@playwright/test": "^1.58.0",
+    "pixelmatch": "^6.0.0",
+    "pngjs": "^7.0.0",
+    "@types/pngjs": "^6.0.5"
   }
 }

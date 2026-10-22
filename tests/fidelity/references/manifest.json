@@ -1,0 +1,79 @@
+{
+  "status": "APPROVED",
+  "fileKey": "2eUZ8m0EBXVi9ZKFwGdUx4",
+  "scale": 1,
+  "references": {
+    "desktop-violet": {
+      "nodeId": "1:2",
+      "viewport": 1440,
+      "width": 360,
+      "height": 348,
+      "filename": "desktop-violet.png",
+      "sha256": "45b676e8c46cd22be5674d7e2174379dd2216662083bc42734e93a06584e7ac7"
+    },
+    "desktop-mint": {
+      "nodeId": "1:9",
+      "viewport": 1440,
+      "width": 360,
+      "height": 348,
+      "filename": "desktop-mint.png",
+      "sha256": "0ad9a3638049e2784a08fcacad3cdc56d8ee4c6e4bd7a9b4038caaa3f5ccb731"
+    },
+    "desktop-peach": {
+      "nodeId": "1:16",
+      "viewport": 1440,
+      "width": 360,
+      "height": 348,
+      "filename": "desktop-peach.png",
+      "sha256": "faf79d28ae540e4d61518710b4b48276c94849fb6bda58308c17e57399e2c8d6"
+    },
+    "mobile-320-violet": {
+      "nodeId": "1:25",
+      "viewport": 320,
+      "width": 288,
+      "height": 305,
+      "filename": "mobile-320-violet.png",
+      "sha256": "db3bdde78c5111a0648fa4bc9908dc4ba6399b1f1ece2484ba7200654979f6fa"
+    },
+    "mobile-320-mint": {
+      "nodeId": "7:2",
+      "viewport": 320,
+      "width": 288,
+      "height": 305,
+      "filename": "mobile-320-mint.png",
+      "sha256": "319ca8487a372f4fa336c5c3e490a93ca2119aabfeff42d2f0831d0419c04099"
+    },
+    "mobile-320-peach": {
+      "nodeId": "7:9",
+      "viewport": 320,
+      "width": 288,
+      "height": 300,
+      "filename": "mobile-320-peach.png",
+      "sha256": "53adab597163af9356778683381b1e353fb2d205bbd23ae0b3abd7f756a1543b"
+    },
+    "mobile-375-violet": {
+      "nodeId": "9:2",
+      "viewport": 375,
+      "width": 343,
+      "height": 300,
+      "filename": "mobile-375-violet.png",
+      "sha256": "04f9534514d519bf9862bf99d4e1fa74ad89d21d954d377e23301c9ddbc5d3c5"
+    },
+    "mobile-375-mint": {
+      "nodeId": "9:9",
+      "viewport": 375,
+      "width": 343,
+      "height": 300,
+      "filename": "mobile-375-mint.png",
+      "sha256": "f6a15e95fdfd5cb7400c5908422902407ea38b7d225f81ca2388f3dc1b76ac07"
+    },
+    "mobile-375-peach": {
+      "nodeId": "9:16",
+      "viewport": 375,
+      "width": 343,
+      "height": 300,
+      "filename": "mobile-375-peach.png",
+      "sha256": "db1b47150c87a7cf5ecf7b68e5389cbe5cd21421cb31cb7ea3adefa5ca529546"
+    }
+  }
+}

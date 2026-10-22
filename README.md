@@ -1,35 +1,54 @@
-# PixelCraft UI — FeatureCard
+# PixelCraft UI — Figma-driven FeatureCard
 
-Independent **React 19 + TypeScript** UI case study showcasing a reusable, responsive card component. No proprietary assets or source code.
+React 19 / TypeScript showcase with three FeatureCard themes, Figma Auto Layout, Storybook, Playwright and GitHub Actions.
 
-**[Figma design reference](https://www.figma.com/design/2eUZ8m0EBXVi9ZKFwGdUx4)**
+- [Live demo](https://faezemoradi8993.github.io/pixelcraft-ui/)
+- [Figma design](https://www.figma.com/design/2eUZ8m0EBXVi9ZKFwGdUx4)
+- [Figma fidelity review and agent contract](docs/agent-fidelity-loop.md)
 
-## Features
-- Three visual variants: Violet, Mint and Peach
-- Responsive layout and long-content Storybook example
-- Accessible headings and link names, visible keyboard focus, reduced-motion support
-- React Testing Library + Vitest test
-- Playwright screenshot capture script (not an automated Figma pixel-diff)
+## Development and CI
 
-## Local development
 ```bash
 npm install
-npm run dev
 npm run build
 npm test
-npm run storybook
+npm run build-storybook
+npx playwright install chromium
+npm run test:visual
 ```
 
-## Screenshot capture
-Install Chromium with `npx playwright install chromium`, then run `npm run screenshots`. The script expects Chromium at `/usr/bin/chromium` unless `CHROMIUM_PATH` is provided.
+The responsive geometry/overflow suite covers **320, 375, 768 and 1440 CSS-pixel viewports**, all three themes. Browser screenshot regressions remain separate from Figma fidelity.
 
-Figma contains three desktop components (360 × 348) and a mobile example (320px wide). Styling and copy were aligned with that reference, but **pixel-perfect parity has not been independently verified**. Build, unit tests and screenshot comparison have **not been confirmed passing** in the publishing environment.
+## Figma references — important approval boundary
 
-## Repository status
-Source is published here; no hosted demo, CI or LinkedIn Featured entry is implied by this repository.
+The repository contains **nine genuine Figma PNG exports** in `tests/fidelity/candidates/`:
+three 360×348 desktop cards; three 288px cards inside 320px mobile viewports; and three 343px cards inside 375px viewports. The Figma desktop and mobile frames use nested Auto Layout.
 
-## Visual regression (Playwright)
+The nine Figma candidates have now been **explicitly approved by the project owner** and promoted to `tests/fidelity/references/` with SHA-256 integrity hashes. The original candidates remain available for review. Approval applies to the design references, not the React implementation.
 
-The `Visual Regression` GitHub Actions workflow captures the three desktop variants and one mobile variant. On its first successful run on `main`, it generates **provisional** PNG snapshots and commits them. Later runs compare against these baselines; diffs are uploaded as workflow artifacts. A passing screenshot test proves regression stability against its baseline, **not** pixel-perfect matching to Figma.
+Run `npm run build` and start `npm run preview -- --host 127.0.0.1 --port 4173` in one terminal. In a second terminal:
 
-Run locally with `npm run build && npx playwright install chromium && npm run test:visual`. To intentionally update baselines, use `npm run test:visual:update` and review the PNG changes before committing. See [Figma validation audit](docs/figma-validation.md) for measured values and known discrepancies.
+```bash
+npm run fidelity:measure
+```
+
+The command compares all nine browser renders with Figma candidates and writes `test-results/fidelity/report-measure.json`, actual screenshots and diff PNGs. A difference above the provisional 1% threshold is reported as a failure; do **not** change the threshold or reference PNG to make tests pass.
+
+The approved references were promoted after project-owner review. To verify them:
+
+```bash
+npm run fidelity:verify
+```
+
+The promotion command (`npm run fidelity:approve -- --approve-reviewed-design`) created `tests/fidelity/references/` with SHA-256 integrity checks and refuses to overwrite existing golden files. Commit approved files in a reviewed PR and enforce `CODEOWNERS` with GitHub branch protection; adding `CODEOWNERS` alone is insufficient.
+
+`npm run fidelity:capture` is provided for a first-time token-authenticated Figma export **only when the candidates are absent**. Never commit the Figma token.
+
+The Visual Regression GitHub Actions workflow produces diagnostic Figma diffs from candidates, then **requires** approved golden references to pass. References are now present, so the gate will evaluate the real React/Figma mismatch; a failing fidelity comparison remains an actionable issue. See [agent contract](AGENTS.md) for the maximum five-iteration repair workflow (instructions only; no autonomous coding agent runs in CI).
+
+## Limitations
+
+- Inter weights 400 and 700 are self-hosted through @fontsource/inter 5.3.0 in the app and Storybook; Figma/Chromium antialiasing can still differ.
+- A green Playwright screenshot regression does not imply fidelity to Figma.
+- The 768px tablet test checks responsive behavior, not pixel fidelity, because there is no approved tablet Figma reference.
+- Pixel matching is one signal; geometry, text wrap, accessibility and human review matter.

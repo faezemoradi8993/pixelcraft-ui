@@ -1,0 +1,80 @@
+{
+  "status": "PENDING_HUMAN_APPROVAL",
+  "fileKey": "2eUZ8m0EBXVi9ZKFwGdUx4",
+  "scale": 1,
+  "referenceSource": "Figma MCP screenshot export at 1x",
+  "references": {
+    "desktop-violet": {
+      "nodeId": "1:2",
+      "viewport": 1440,
+      "width": 360,
+      "height": 348,
+      "filename": "desktop-violet.png",
+      "blobSha": "fae10d8c56c2b44528cf0f1cdafb275c9827e5be"
+    },
+    "desktop-mint": {
+      "nodeId": "1:9",
+      "viewport": 1440,
+      "width": 360,
+      "height": 348,
+      "filename": "desktop-mint.png",
+      "blobSha": "d0a186c139f515e9828eac45bf5960257d6315c8"
+    },
+    "desktop-peach": {
+      "nodeId": "1:16",
+      "viewport": 1440,
+      "width": 360,
+      "height": 348,
+      "filename": "desktop-peach.png",
+      "blobSha": "e1d13864a7df12fa9ade999154f03c13056eb11a"
+    },
+    "mobile-320-violet": {
+      "nodeId": "1:25",
+      "viewport": 320,
+      "width": 288,
+      "height": 305,
+      "filename": "mobile-320-violet.png",
+      "blobSha": "7ce36b52238e212d93e733b1e5bc2e24c40de5ec"
+    },
+    "mobile-320-mint": {
+      "nodeId": "7:2",
+      "viewport": 320,
+      "width": 288,
+      "height": 305,
+      "filename": "mobile-320-mint.png",
+      "blobSha": "b2fd5e838821fe1aa0a80eda25c9a7ab4a71d813"
+    },
+    "mobile-320-peach": {
+      "nodeId": "7:9",
+      "viewport": 320,
+      "width": 288,
+      "height": 300,
+      "filename": "mobile-320-peach.png",
+      "blobSha": "7f28985decda332a69f57aae9e43b264e6fffcd4"
+    },
+    "mobile-375-violet": {
+      "nodeId": "9:2",
+      "viewport": 375,
+      "width": 343,
+      "height": 300,
+      "filename": "mobile-375-violet.png",
+      "blobSha": "0e19cb0846c2b4a998bc83e4482062c13849e45f"
+    },
+    "mobile-375-mint": {
+      "nodeId": "9:9",
+      "viewport": 375,
+      "width": 343,
+      "height": 300,
+      "filename": "mobile-375-mint.png",
+      "blobSha": "806195b3d57af188d19c0568d7e79ab61e1c9130"
+    },
+    "mobile-375-peach": {
+      "nodeId": "9:16",
+      "viewport": 375,
+      "width": 343,
+      "height": 300,
+      "filename": "mobile-375-peach.png",
+      "blobSha": "25db72283422b4b4284f429e29db21acd11fe2d9"
+    }
+  }
+}

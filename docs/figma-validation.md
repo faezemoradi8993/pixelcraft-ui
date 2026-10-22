@@ -1,3 +1,7 @@
+> **Update (2026-10-22):** The detailed audit below records an earlier pre-Auto-Layout state and is retained as historical evidence. Since that audit, the Mint description overlap has been fixed, all three 360×348 desktop references and all six mobile variants have been converted to nested Figma Auto Layout, and nine new Figma PNG candidates are staged in `tests/fidelity/candidates/`. The mobile reference dimensions are now **288px at 320px viewport** and **343px at 375px viewport**, with 16px gutters. See [current reference matrix and validation status](agent-fidelity-loop.md). **The earlier statements below about missing mobile references, absolute-only layout and Mint overlap are superseded.** Visual pixel parity with the React implementation remains unapproved.
+
+---
+
 # Figma design validation — FeatureCard
 
 Reference: https://www.figma.com/design/2eUZ8m0EBXVi9ZKFwGdUx4
@@ -44,3 +48,26 @@ Inspected high-fidelity Figma design context for nodes `1:2`, `1:9`, `1:16` and 
 - Mobile: desktop node context does not establish an approved mobile visual reference. Existing mobile snapshot proves regression stability only.
 
 **Decision:** No baseline re-approval or automatic snapshot updates were performed. Before pixel-perfect certification, provide a deterministic licensed/local Inter font, resolve Mint source overlap, align CTA representation with Figma, and compare 1x Figma exports against 1x Chromium screenshots with identical fonts. Preserve approved regression baselines until those changes have been reviewed.
+
+## Release gate: design fidelity before regression baseline approval
+
+**Reference of truth:** Figma node IDs `1:2`, `1:9`, `1:16` for desktop; mobile fidelity remains **unverified** until a mobile Figma frame is explicitly identified.
+
+### Required order for a visual change
+
+1. **Design audit:** record exact Figma node/frame, design dimensions, typography, colors, layout and expected responsive behavior. Mark intentional deviations (e.g. overlapping absolute-positioned text) explicitly.
+2. **Implementation:** make related React/CSS changes together. Do not change approved screenshots as a shortcut.
+3. **Local checks:** run `npm run build`, `npm test`, `npm run build-storybook`, then `npm run test:visual` after `npx playwright install chromium`.
+4. **Fidelity review:** compare same-size 1x Figma export against browser screenshot at matching viewport, scale and font. Record observed differences and decisions. Geometry assertions help but are **not** a substitute for this review.
+5. **Baseline proposal:** *only after fidelity review*, run `npm run test:visual:update` locally; review `git diff -- tests/visual/feature-card.spec.ts-snapshots` and commit intended PNG changes in the same PR as implementation. Never automatically regenerate screenshots in CI.
+6. **Pull request:** require reviewer approval of visual diffs and passing build, unit, accessibility checks where available, and Visual Regression before merging. A changed baseline needs explicit reviewer acknowledgment.
+
+### CI contract
+
+The Visual Regression workflow has read-only repository permissions and **never writes to `main`**. It compares against committed snapshots on PRs and pushes. Missing baselines or unexpected visual changes fail the job; failed-run screenshots and diff artifacts are available for diagnosis.
+
+### Current project caveats
+
+- **Inter is not bundled**, so cross-machine fidelity is not deterministic yet. Supply a properly licensed self-hosted font or another explicitly approved design font before claiming exact typography.
+- **Figma screenshot comparison has not been performed**. No pixel-perfect claim is authorized.
+- Existing browser snapshots are regression references, **not Figma-approved fidelity references**.
