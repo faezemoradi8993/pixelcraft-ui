@@ -49,7 +49,7 @@ The Visual Regression GitHub Actions workflow produces diagnostic Figma diffs fr
 
 ## Limitations
 
-- Typography fidelity is not deterministic until Inter is bundled and font rendering is standardized.
+- Inter weights 400 and 700 are self-hosted through @fontsource/inter 5.3.0 in the app and Storybook; Figma/Chromium antialiasing can still differ.
 - A green Playwright screenshot regression does not imply fidelity to Figma.
 - The 768px tablet test checks responsive behavior, not pixel fidelity, because there is no approved tablet Figma reference.
 - Pixel matching is one signal; geometry, text wrap, accessibility and human review matter.

@@ -33,7 +33,7 @@ Read `test-results/fidelity/report-measure.json` and nine actual/diff PNG pairs.
 ## Review and approval
 
 1. Visually inspect `tests/fidelity/candidates/*.png` against Figma nodes and record any intended deviations.
-2. Establish deterministic typography: legally obtained self-hosted Inter font, browser version, viewport, DPR=1 and `document.fonts.ready`. Avoid accepting pixel thresholds before this.
+2. Inter 400/700 is now self-hosted through @fontsource/inter 5.3.0. Verify font rendering, browser version, viewport, DPR=1 and `document.fonts.ready`; a 1% pixel threshold still needs calibration.
 3. Once each image is accepted, explicitly run `npm run fidelity:approve -- --approve-reviewed-design` locally. It copies the candidates, verifies dimensions and writes an **APPROVED** SHA-256 manifest under `tests/fidelity/references/`.
 4. Review the new golden-reference files in the PR. Do not bypass CODEOWNERS reviews; configure required reviews and CI status checks in repository branch-protection settings.
 5. Run `npm run fidelity:verify` against approved PNGs. The CI gate fails if references are absent or their SHA differs from the manifest.
@@ -57,7 +57,7 @@ After improving fidelity, run unit tests, Storybook build, responsive geometry t
 
 ## Open issues
 
-- Inter is not yet packaged locally. Differences in font rasterization and Unicode CTA icon may remain.
+- Inter is bundled for the app and Storybook. Figma/Chromium text rasterization and the Unicode CTA icon versus Lucide icon still need visual review.
 - The original browser screenshot baseline was recorded before final Figma reconciliation; deliberate UI changes can fail regression until snapshots are reviewed and intentionally accepted.
 - No 768px tablet-specific Figma reference exists; this viewport is checked for overflow, wrapping and element placement, not 1x image fidelity.
 - There is still no background/self-executing Codex/Cursor workflow. `AGENTS.md` is an instruction contract, not an executor.
