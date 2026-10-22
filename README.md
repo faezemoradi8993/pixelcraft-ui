@@ -27,3 +27,9 @@ Figma contains three desktop components (360 × 348) and a mobile example (320px
 
 ## Repository status
 Source is published here; no hosted demo, CI or LinkedIn Featured entry is implied by this repository.
+
+## Visual regression (Playwright)
+
+The `Visual Regression` GitHub Actions workflow captures the three desktop variants and one mobile variant. On its first successful run on `main`, it generates **provisional** PNG snapshots and commits them. Later runs compare against these baselines; diffs are uploaded as workflow artifacts. A passing screenshot test proves regression stability against its baseline, **not** pixel-perfect matching to Figma.
+
+Run locally with `npm run build && npx playwright install chromium && npm run test:visual`. To intentionally update baselines, use `npm run test:visual:update` and review the PNG changes before committing. See [Figma validation audit](docs/figma-validation.md) for measured values and known discrepancies.
