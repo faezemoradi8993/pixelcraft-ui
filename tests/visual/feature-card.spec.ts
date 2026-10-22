@@ -39,6 +39,17 @@ test('Figma desktop geometry and responsive containment', async ({ page }) => {
     expect(padding).toBe('30px');
     const titleSize = await card.locator('h2').evaluate(element => getComputedStyle(element).fontSize);
     expect(titleSize).toBe('28px');
+    const icon = card.locator('span[aria-hidden="true"]').first();
+    const iconBox = await icon.boundingBox();
+    expect(iconBox).not.toBeNull();
+    expect(iconBox!.width).toBe(58);
+    expect(iconBox!.height).toBe(58);
+    expect(Math.abs(iconBox!.x - box!.x - 30)).toBeLessThanOrEqual(2);
+    expect(Math.abs(iconBox!.y - box!.y - 30)).toBeLessThanOrEqual(2);
+    const titleBox = await card.locator('h2').boundingBox();
+    expect(titleBox).not.toBeNull();
+    expect(Math.abs(titleBox!.y - box!.y - 123)).toBeLessThanOrEqual(4);
+    await expect(card.getByRole('link')).toContainText('Explore project');
   }
 
   await page.setViewportSize({ width: 375, height: 850 });
