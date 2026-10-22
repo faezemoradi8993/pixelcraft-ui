@@ -1,58 +1,64 @@
-# Agent-driven Figma fidelity loop
+# Figma-driven visual fidelity — FeatureCard
 
-## Golden reference acquisition (one-time, human-reviewed)
-The three desktop Figma frames are nodes `1:2`, `1:9`, `1:16` in file `2eUZ8m0EBXVi9ZKFwGdUx4`. Export each at **1x** with a Figma personal access token:
+**Implementation status (2026-10-22):** all three desktop Figma components and six mobile review frames have nested Auto Layout; nine authentic 1x Figma screenshots are staged as **unapproved candidates**, all wired into `scripts/fidelity.mjs`. Automated code-fixing orchestration is **not yet connected**. There is no claim of certified pixel-perfect output.
+
+## Reference matrix
+
+| Case | Browser viewport | Card dimensions | Figma node |
+|---|---:|---:|---|
+| desktop-violet | 1440px | 360×348 | `1:2` |
+| desktop-mint | 1440px | 360×348 | `1:9` |
+| desktop-peach | 1440px | 360×348 | `1:16` |
+| mobile-320-violet | 320px | 288×305 | `1:25` |
+| mobile-320-mint | 320px | 288×305 | `7:2` |
+| mobile-320-peach | 320px | 288×300 | `7:9` |
+| mobile-375-violet | 375px | 343×300 | `9:2` |
+| mobile-375-mint | 375px | 343×300 | `9:9` |
+| mobile-375-peach | 375px | 343×300 | `9:16` |
+
+The Figma file is [FeatureCard Desktop & Mobile](https://www.figma.com/design/2eUZ8m0EBXVi9ZKFwGdUx4). Mobile viewports use 16px horizontal page gutters: 320→288 and 375→343. The desktop Mint text-overlap defect was corrected. The Figma designs now use Auto Layout for header/body and flexible CTA spacing. Width wrapping was inspected at the exact published sizes; a Figma design does not guarantee arbitrary viewport correctness by itself.
+
+## Run local fidelity measurement
 
 ```bash
 npm install
-FIGMA_TOKEN=... npm run fidelity:capture
-```
-
-Review the three PNGs in `tests/fidelity/references/` against the original Figma file, then commit **both** PNGs and `manifest.json`. The capture command refuses to overwrite an existing manifest. The verification command checks each image SHA-256; neither CI nor an agent may refresh references as a shortcut. Enforce approval using CODEOWNERS/branch rules in GitHub settings (not guaranteed by this script alone).
-
-## Run verification
-```bash
 npm run build
 npm run preview -- --host 127.0.0.1 --port 4173
-# in another terminal
-npm run fidelity:verify
+# another terminal:
+npm run fidelity:measure
 ```
 
-Outputs `test-results/fidelity/*-actual.png` and `*-diff.png`. The 1% threshold is **provisional**; inspect anti-aliasing and font rendering before treating it as acceptance. This is not an AI agent by itself.
+Read `test-results/fidelity/report-measure.json` and nine actual/diff PNG pairs. Reports distinguish mismatched dimensions from mismatched pixels. `measure` evaluates **unapproved Figma candidates**; it is diagnostic and cannot satisfy the protected CI fidelity gate.
 
-## AI Agent instructions (Cursor/Codex/other coding agent)
-1. Read Figma node specs and current component code; preserve reference PNGs and manifest.
-2. Run build and fidelity verification against the local preview.
-3. Inspect per-variant diff artifacts and geometry checks; modify only implementation files.
-4. Retry at most **five** iterations; record the initial and final difference ratios.
-5. If a threshold is met, run unit tests, Storybook build and Playwright regression tests. Open a PR, **do not merge automatically**.
-6. If five attempts fail, stop with a discrepancy report. Never update the reference images, SHA manifest, thresholds, or tests to force a pass.
+## Review and approval
 
-## Known blockers
-The reference images have **not yet been captured or approved**. Typography is not deterministic until the approved Inter font is bundled. The Mint source has a text overlap; flag intentional deviations for human approval. No mobile Figma reference is identified. This script provides the measurement engine and agent contract, **not** autonomous orchestration or certified pixel-perfect fidelity.
+1. Visually inspect `tests/fidelity/candidates/*.png` against Figma nodes and record any intended deviations.
+2. Establish deterministic typography: legally obtained self-hosted Inter font, browser version, viewport, DPR=1 and `document.fonts.ready`. Avoid accepting pixel thresholds before this.
+3. Once each image is accepted, explicitly run `npm run fidelity:approve -- --approve-reviewed-design` locally. It copies the candidates, verifies dimensions and writes an **APPROVED** SHA-256 manifest under `tests/fidelity/references/`.
+4. Review the new golden-reference files in the PR. Do not bypass CODEOWNERS reviews; configure required reviews and CI status checks in repository branch-protection settings.
+5. Run `npm run fidelity:verify` against approved PNGs. The CI gate fails if references are absent or their SHA differs from the manifest.
 
-## Enforcement status and limitations (audited)
+`CODEOWNERS` names a reviewer, **but cannot enforce a rule until GitHub branch protection or rulesets are configured**. A repository owner approving their own changes is not independent review.
 
-The Visual Regression workflow now **fails closed** if `tests/fidelity/references/manifest.json` is absent; it no longer reports green for an unconfigured fidelity check. This means the PR remains blocked until genuine Figma exports are reviewed and committed. This is intentional.
+## Safe five-iteration AI repair contract
 
-`.github/CODEOWNERS` names the current repository owner for sensitive paths, but this **does not enforce approval by itself**. In GitHub repository settings enable a branch protection rule or ruleset for `main`: require pull requests, require the quality and visual-regression checks, require Code Owner review, and restrict bypass permissions where possible. A sole repository owner cannot count on self-approval as independent review; add an independent maintainer to enforce that separation.
+The Agent reads Figma specs, runs the React build and `fidelity:measure`, inspects image diffs, edits React/CSS **only** and remeasures, at most five attempts. The agent may not change `tests/fidelity/references/**`, candidate screenshots, diff thresholds, tests, or CI workflows to get a green result. Once approved references exist, the agent uses `fidelity:verify`.
 
-No `package-lock.json` exists in this repository at audit time. CI therefore intentionally retains `npm install` rather than an invalid `npm ci` call. Generate and commit a genuine lockfile in a network-enabled development environment before switching to `npm ci` and dependency caching.
+After improving fidelity, run unit tests, Storybook build, responsive geometry tests, screenshot regression tests, and raise a PR. Changes to Playwright baselines require explicit human review. If a source design has a defect, flag it rather than reproducing it silently. Stop after five attempts and report remaining mismatches.
 
-The recorded Figma source uses Inter but the web implementation does not bundle a verified local Inter font. Fidelity thresholds are provisional until fonts and Figma/Chromium render environments have been aligned.
+## CI behavior
 
-This project does **not** yet contain a self-executing AI agent that edits source code. The `AGENTS.md` file defines the five-attempt contract for an external coding agent; CI runs verification, not auto-repair.
+`Visual Regression` on PR and main now:
+1. Installs dependencies and Chromium; builds app.
+2. Produces *diagnostic* diffs against nine Figma candidate images (failure tolerated, never treated as approval).
+3. Runs Playwright screenshot baselines and behavioral responsive tests at 320/375/768/1440.
+4. Requires `tests/fidelity/references/manifest.json` and then verifies all **nine approved** Figma references. Without the approved manifest CI intentionally fails.
+5. Uploads diff and HTML report artifacts.
 
-## Responsive design reference matrix (Figma updated 2026-10-22)
+## Open issues
 
-The Figma desktop Mint description was moved below the two-line title to remove the source overlap. Six additional mobile review cards are now present (three themes at each width). These are fixed-width visual references, **not proof that Figma Auto Layout automatically adapts every width**.
-
-| Target | Card width | Violet | Mint | Peach | Fidelity automated? |
-|---|---:|---|---|---|---|
-| Desktop | 360px | `1:2` | `1:9` | `1:16` | Pending export and approval |
-| Mobile 320px card reference | 320px | `1:25` | `7:2` | `7:9` | Not yet wired |
-| Mobile 375px viewport (16px gutters) | 343px | `9:2` | `9:9` | `9:16` | Not yet wired |
-
-**Responsive test contract:** test real browser viewports at 320, 375, 768 and 1440 CSS pixels, verify no horizontal scrolling, text overlap or clipped CTA, and capture every theme. At 375px, compare the 343px-wide card only after confirming the implementation uses 16px outer gutters; otherwise adjust the design/reference contract with review. Tablet 768px uses behavioral/layout assertions until an approved Figma-specific visual reference exists.
-
-**Do not silently call mobile screenshot regression “Figma fidelity”.** The current `scripts/fidelity.mjs` handles only the three 360px desktop components. Add the mobile reference mappings and tests in a separate PR after these Figma changes are approved, without regenerating or replacing old baselines.
+- Inter is not yet packaged locally. Differences in font rasterization and Unicode CTA icon may remain.
+- The original browser screenshot baseline was recorded before final Figma reconciliation; deliberate UI changes can fail regression until snapshots are reviewed and intentionally accepted.
+- No 768px tablet-specific Figma reference exists; this viewport is checked for overflow, wrapping and element placement, not 1x image fidelity.
+- There is still no background/self-executing Codex/Cursor workflow. `AGENTS.md` is an instruction contract, not an executor.
+- The PR must not merge solely because an old regression workflow is green.
