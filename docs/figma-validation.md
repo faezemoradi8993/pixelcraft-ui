@@ -30,3 +30,17 @@ Reference: https://www.figma.com/design/2eUZ8m0EBXVi9ZKFwGdUx4
 3. Record and fix differences in typography, wrapping, positions, spacing and focus states.
 4. Review provisional screenshots under `tests/visual/feature-card.spec.ts-snapshots` and approve them by code review.
 5. Future PRs run screenshot comparison automatically; failed diffs appear in the workflow artifact.
+
+
+## Detailed fidelity audit (2026-10-22)
+Inspected high-fidelity Figma design context for nodes `1:2`, `1:9`, `1:16` and current React/CSS source. This is a **structural audit**, not a certified pixel-diff result.
+
+- All three desktop frames: **360×348**, white background, `#e8e6ef` 1px border, 24px corner radius.
+- Icon container: Figma local offset **29px,29px**, **58×58**, radius **18px**. CSS padding 30px with border-box and 1px border gives inner origin 30px, an effective 1px difference in local coordinate conventions.
+- Heading: Figma x=29, y=123, width=300, Inter Bold 28px. CSS uses top row 58px + body margin 36px after 30px padding: approximate y=124, but exact text glyph top depends on font metrics.
+- Description: Figma x=29, y=183, width=298, Inter Regular 15px. CSS uses flow below heading + margin 16px, and cannot match all three absolute Y coordinates when title wraps.
+- CTA: Figma x=29, y=289, Inter Bold 14px and Unicode `↗`; React uses an 18px Lucide ArrowUpRight icon with 9px gap, so the icon shape and spacing differ from the source. This is a documented visual mismatch.
+- Font: CSS requests Inter but does not bundle it, so fallback rendering may alter line wraps and pixel comparison.
+- Mobile: desktop node context does not establish an approved mobile visual reference. Existing mobile snapshot proves regression stability only.
+
+**Decision:** No baseline re-approval or automatic snapshot updates were performed. Before pixel-perfect certification, provide a deterministic licensed/local Inter font, resolve Mint source overlap, align CTA representation with Figma, and compare 1x Figma exports against 1x Chromium screenshots with identical fonts. Preserve approved regression baselines until those changes have been reviewed.
