@@ -1,0 +1,62 @@
+name: Visual Regression
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'tests/visual/**'
+      - 'playwright.config.ts'
+      - 'package.json'
+      - 'vite.config.ts'
+      - '.github/workflows/visual-regression.yml'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  screenshots:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - name: Bootstrap reference snapshots (main only)
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        shell: bash
+        run: |
+          if [ ! -d tests/visual/feature-card.spec.ts-snapshots ]; then
+            npx playwright test --update-snapshots
+          fi
+      - name: Compare against approved repository snapshots
+        run: npx playwright test
+      - name: Upload visual diff report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-regression-report
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+      - name: Commit provisional baselines on first run
+        if: success() && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -n "$(git status --porcelain -- tests/visual/feature-card.spec.ts-snapshots)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add tests/visual/feature-card.spec.ts-snapshots
+            git commit -m "test: record provisional visual baselines [skip ci]"
+            git -c http.extraheader="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)" push origin HEAD:main
+          fi
