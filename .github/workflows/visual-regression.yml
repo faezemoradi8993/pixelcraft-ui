@@ -5,8 +5,7 @@ on:
     branches: [main]
     paths:
       - 'src/**'
-      - 'tests/visual/**'
-      - 'tests/fidelity/**'
+      - 'tests/**'
       - 'scripts/fidelity.mjs'
       - 'playwright.config.ts'
       - 'package.json'
@@ -22,25 +21,38 @@ permissions:
 jobs:
   visual-regression:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: npm install --no-audit --no-fund
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-audit --no-fund
       - run: npx playwright install --with-deps chromium
       - run: npm run build
-      - run: npm run test:visual
-      - name: Compare against approved Figma references (when available)
-        if: hashFiles('tests/fidelity/references/manifest.json') != ''
+      - name: Verify regression baselines
+        run: npm run test:visual
+      - name: Require approved golden Figma references
+        run: |
+          test -f tests/fidelity/references/manifest.json || {
+            echo "::error::Figma fidelity is NOT configured. Review and commit approved PNGs and manifest before merge."
+            exit 1
+          }
+      - name: Verify Figma fidelity (required)
         run: |
           npm run preview -- --host 127.0.0.1 --port 4173 --strictPort &
+          preview_pid=$!
+          trap 'kill $preview_pid 2>/dev/null || true' EXIT
+          ready=0
           for i in $(seq 1 30); do
-            if curl --fail --silent http://127.0.0.1:4173/pixelcraft-ui/ > /dev/null; then break; fi
+            if curl --fail --silent http://127.0.0.1:4173/pixelcraft-ui/ > /dev/null; then ready=1; break; fi
             sleep 1
           done
+          if [ "$ready" -ne 1 ]; then echo "::error::Vite preview did not start"; exit 1; fi
           npm run fidelity:verify
-      - name: Upload screenshots and diffs on failure
+      - name: Upload visual diagnostics
         if: failure()
         uses: actions/upload-artifact@v4
         with:
