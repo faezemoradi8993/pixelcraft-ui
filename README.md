@@ -1,13 +1,12 @@
-# PixelCraft UI — FeatureCard
+# PixelCraft UI — Figma-driven FeatureCard
 
-React 19 + TypeScript UI case study with three responsive FeatureCard variants, Storybook, Vitest, Playwright and GitHub Actions.
+React 19 / TypeScript showcase with three FeatureCard themes, Figma Auto Layout, Storybook, Playwright and GitHub Actions.
 
 - [Live demo](https://faezemoradi8993.github.io/pixelcraft-ui/)
 - [Figma design](https://www.figma.com/design/2eUZ8m0EBXVi9ZKFwGdUx4)
-- [Figma design audit](docs/figma-validation.md)
-- [Agent fidelity loop instructions](docs/agent-fidelity-loop.md)
+- [Figma fidelity review and agent contract](docs/agent-fidelity-loop.md)
 
-## Development
+## Development and CI
 
 ```bash
 npm install
@@ -18,18 +17,39 @@ npx playwright install chromium
 npm run test:visual
 ```
 
-## Two independent visual checks
+The responsive geometry/overflow suite covers **320, 375, 768 and 1440 CSS-pixel viewports**, all three themes. Browser screenshot regressions remain separate from Figma fidelity.
 
-**Visual regression:** `npm run test:visual` compares browser screenshots with committed Playwright snapshots. Snapshot changes are reviewed in a PR; CI never rewrites baselines.
+## Figma references — important approval boundary
 
-**Visual fidelity (Figma):** `npm run fidelity:verify` compares browser renders with separately approved Figma PNG exports. It fails until immutable Figma references have been captured and reviewed.
+The repository contains **nine genuine Figma PNG exports** in `tests/fidelity/candidates/`:
+three 360×348 desktop cards; three 288px cards inside 320px mobile viewports; and three 343px cards inside 375px viewports. The Figma desktop and mobile frames use nested Auto Layout.
 
-One-time reference capture (requires a personal Figma API token with appropriate file access):
+These PNGs have status **PENDING_HUMAN_APPROVAL**. They are design candidates, *not* automatically approved regression baselines.
+
+Run `npm run build` and start `npm run preview -- --host 127.0.0.1 --port 4173` in one terminal. In a second terminal:
 
 ```bash
-FIGMA_TOKEN=... npm run fidelity:capture
+npm run fidelity:measure
 ```
 
-Review and commit the generated `tests/fidelity/references/*.png` and `manifest.json`. **Never commit the token.** Run `npm run build`, start `npm run preview -- --host 127.0.0.1 --port 4173` in one terminal, then run `npm run fidelity:verify` in another. Difference images are written to `test-results/fidelity/`.
+The command compares all nine browser renders with Figma candidates and writes `test-results/fidelity/report-measure.json`, actual screenshots and diff PNGs. A difference above the provisional 1% threshold is reported as a failure; do **not** change the threshold or reference PNG to make tests pass.
 
-The [agent workflow](docs/agent-fidelity-loop.md) specifies up to five repair iterations. **The measurement engine is implemented; a self-running coding agent is not yet connected.** Golden Figma PNGs have not yet been captured or approved. Passing regression tests does not certify pixel-perfect parity.
+Only **after visually reviewing the nine reference PNGs against Figma**, explicitly promote them:
+
+```bash
+npm run fidelity:approve -- --approve-reviewed-design
+npm run fidelity:verify
+```
+
+The promotion command creates `tests/fidelity/references/` with SHA-256 integrity checks and refuses to overwrite existing golden files. Commit approved files in a reviewed PR and enforce `CODEOWNERS` with GitHub branch protection; adding `CODEOWNERS` alone is insufficient.
+
+`npm run fidelity:capture` is provided for a first-time token-authenticated Figma export **only when the candidates are absent**. Never commit the Figma token.
+
+The Visual Regression GitHub Actions workflow produces diagnostic Figma diffs from candidates, then **requires** approved golden references before it can pass. Until approved references are available, a failing fidelity gate is intentional. See [agent contract](AGENTS.md) for the maximum five-iteration repair workflow (instructions only; no autonomous coding agent runs in CI).
+
+## Limitations
+
+- Typography fidelity is not deterministic until Inter is bundled and font rendering is standardized.
+- A green Playwright screenshot regression does not imply fidelity to Figma.
+- The 768px tablet test checks responsive behavior, not pixel fidelity, because there is no approved tablet Figma reference.
+- Pixel matching is one signal; geometry, text wrap, accessibility and human review matter.
