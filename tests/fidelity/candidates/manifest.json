@@ -10,7 +10,7 @@
       "width": 360,
       "height": 348,
       "filename": "desktop-violet.png",
-      "blobSha": "8918283872d9d4e1e0047eb007e1b80b0c95fbd9"
+      "blobSha": "fae10d8c56c2b44528cf0f1cdafb275c9827e5be"
     },
     "desktop-mint": {
       "nodeId": "1:9",
@@ -18,7 +18,7 @@
       "width": 360,
       "height": 348,
       "filename": "desktop-mint.png",
-      "blobSha": "995971f74c7d4214f9ed25e5bb9024296fafb907"
+      "blobSha": "d0a186c139f515e9828eac45bf5960257d6315c8"
     },
     "desktop-peach": {
       "nodeId": "1:16",
@@ -26,7 +26,7 @@
       "width": 360,
       "height": 348,
       "filename": "desktop-peach.png",
-      "blobSha": "f62f29b2fc71a269ad5f05e315e5a5333944accd"
+      "blobSha": "e1d13864a7df12fa9ade999154f03c13056eb11a"
     },
     "mobile-320-violet": {
       "nodeId": "1:25",
