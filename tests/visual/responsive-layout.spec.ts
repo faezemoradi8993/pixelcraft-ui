@@ -24,7 +24,7 @@ for (const layout of layouts) {
       const box = await card.boundingBox();
       const title = await card.locator('h2').boundingBox();
       const description = await card.locator('p').boundingBox();
-      const cta = await card.getByRole('link', { name: /Explore project/ }).boundingBox();
+      const cta = await card.getByRole('link', { name: /^Explore / }).boundingBox();
 
       expect(box).not.toBeNull();
       expect(title).not.toBeNull();
