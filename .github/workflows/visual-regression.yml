@@ -30,6 +30,20 @@ jobs:
       - run: npm install --no-audit --no-fund
       - run: npx playwright install --with-deps chromium
       - run: npm run build
+      - name: Measure against Figma candidates (diagnostic, not approval)
+        if: hashFiles('tests/fidelity/candidates/manifest.json') != ''
+        continue-on-error: true
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 4173 --strictPort &
+          preview_pid=$!
+          trap 'kill $preview_pid 2>/dev/null || true' EXIT
+          ready=0
+          for i in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4173/pixelcraft-ui/ > /dev/null; then ready=1; break; fi
+            sleep 1
+          done
+          if [ "$ready" -ne 1 ]; then echo "::error::Vite preview did not start"; exit 1; fi
+          npm run fidelity:measure
       - name: Verify regression baselines
         run: npm run test:visual
       - name: Require approved golden Figma references
@@ -51,7 +65,7 @@ jobs:
           if [ "$ready" -ne 1 ]; then echo "::error::Vite preview did not start"; exit 1; fi
           npm run fidelity:verify
       - name: Upload visual diagnostics
-        if: failure()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: visual-regression-report
