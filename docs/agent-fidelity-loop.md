@@ -42,3 +42,17 @@ No `package-lock.json` exists in this repository at audit time. CI therefore int
 The recorded Figma source uses Inter but the web implementation does not bundle a verified local Inter font. Fidelity thresholds are provisional until fonts and Figma/Chromium render environments have been aligned.
 
 This project does **not** yet contain a self-executing AI agent that edits source code. The `AGENTS.md` file defines the five-attempt contract for an external coding agent; CI runs verification, not auto-repair.
+
+## Responsive design reference matrix (Figma updated 2026-10-22)
+
+The Figma desktop Mint description was moved below the two-line title to remove the source overlap. Six additional mobile review cards are now present (three themes at each width). These are fixed-width visual references, **not proof that Figma Auto Layout automatically adapts every width**.
+
+| Target | Card width | Violet | Mint | Peach | Fidelity automated? |
+|---|---:|---|---|---|---|
+| Desktop | 360px | `1:2` | `1:9` | `1:16` | Pending export and approval |
+| Mobile 320px card reference | 320px | `1:25` | `7:2` | `7:9` | Not yet wired |
+| Mobile 375px viewport (16px gutters) | 343px | `9:2` | `9:9` | `9:16` | Not yet wired |
+
+**Responsive test contract:** test real browser viewports at 320, 375, 768 and 1440 CSS pixels, verify no horizontal scrolling, text overlap or clipped CTA, and capture every theme. At 375px, compare the 343px-wide card only after confirming the implementation uses 16px outer gutters; otherwise adjust the design/reference contract with review. Tablet 768px uses behavioral/layout assertions until an approved Figma-specific visual reference exists.
+
+**Do not silently call mobile screenshot regression “Figma fidelity”.** The current `scripts/fidelity.mjs` handles only the three 360px desktop components. Add the mobile reference mappings and tests in a separate PR after these Figma changes are approved, without regenerating or replacing old baselines.
