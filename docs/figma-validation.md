@@ -1,3 +1,7 @@
+> **Update (2026-10-22):** The detailed audit below records an earlier pre-Auto-Layout state and is retained as historical evidence. Since that audit, the Mint description overlap has been fixed, all three 360×348 desktop references and all six mobile variants have been converted to nested Figma Auto Layout, and nine new Figma PNG candidates are staged in `tests/fidelity/candidates/`. The mobile reference dimensions are now **288px at 320px viewport** and **343px at 375px viewport**, with 16px gutters. See [current reference matrix and validation status](agent-fidelity-loop.md). **The earlier statements below about missing mobile references, absolute-only layout and Mint overlap are superseded.** Visual pixel parity with the React implementation remains unapproved.
+
+---
+
 # Figma design validation — FeatureCard
 
 Reference: https://www.figma.com/design/2eUZ8m0EBXVi9ZKFwGdUx4
