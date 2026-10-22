@@ -30,3 +30,15 @@ Outputs `test-results/fidelity/*-actual.png` and `*-diff.png`. The 1% threshold 
 
 ## Known blockers
 The reference images have **not yet been captured or approved**. Typography is not deterministic until the approved Inter font is bundled. The Mint source has a text overlap; flag intentional deviations for human approval. No mobile Figma reference is identified. This script provides the measurement engine and agent contract, **not** autonomous orchestration or certified pixel-perfect fidelity.
+
+## Enforcement status and limitations (audited)
+
+The Visual Regression workflow now **fails closed** if `tests/fidelity/references/manifest.json` is absent; it no longer reports green for an unconfigured fidelity check. This means the PR remains blocked until genuine Figma exports are reviewed and committed. This is intentional.
+
+`.github/CODEOWNERS` names the current repository owner for sensitive paths, but this **does not enforce approval by itself**. In GitHub repository settings enable a branch protection rule or ruleset for `main`: require pull requests, require the quality and visual-regression checks, require Code Owner review, and restrict bypass permissions where possible. A sole repository owner cannot count on self-approval as independent review; add an independent maintainer to enforce that separation.
+
+No `package-lock.json` exists in this repository at audit time. CI therefore intentionally retains `npm install` rather than an invalid `npm ci` call. Generate and commit a genuine lockfile in a network-enabled development environment before switching to `npm ci` and dependency caching.
+
+The recorded Figma source uses Inter but the web implementation does not bundle a verified local Inter font. Fidelity thresholds are provisional until fonts and Figma/Chromium render environments have been aligned.
+
+This project does **not** yet contain a self-executing AI agent that edits source code. The `AGENTS.md` file defines the five-attempt contract for an external coding agent; CI runs verification, not auto-repair.
