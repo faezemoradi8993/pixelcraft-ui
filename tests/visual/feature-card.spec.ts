@@ -18,6 +18,6 @@ for (const item of cases) {
     const box = await card.boundingBox();
     expect(box).not.toBeNull();
     expect(box!.width).toBeGreaterThan(280);
-    expect(box!.height).toBeGreaterThanOrEqualTo(item.width < 640 ? 300 : 348);
+    expect(box!.height).toBeGreaterThanOrEqual(item.width < 640 ? 300 : 348);
   });
 }
