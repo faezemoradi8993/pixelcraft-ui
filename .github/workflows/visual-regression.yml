@@ -34,7 +34,7 @@ jobs:
         if: hashFiles('tests/fidelity/candidates/manifest.json') != ''
         continue-on-error: true
         run: |
-          npm run preview -- --host 127.0.0.1 --port 4173 --strictPort &
+          ./node_modules/.bin/vite preview --host 127.0.0.1 --port 4173 --strictPort &
           preview_pid=$!
           trap 'kill $preview_pid 2>/dev/null || true' EXIT
           ready=0
@@ -54,7 +54,7 @@ jobs:
           }
       - name: Verify Figma fidelity (required)
         run: |
-          npm run preview -- --host 127.0.0.1 --port 4173 --strictPort &
+          ./node_modules/.bin/vite preview --host 127.0.0.1 --port 4173 --strictPort &
           preview_pid=$!
           trap 'kill $preview_pid 2>/dev/null || true' EXIT
           ready=0
