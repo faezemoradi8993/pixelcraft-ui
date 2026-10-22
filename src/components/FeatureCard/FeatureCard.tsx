@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-import { ArrowUpRight } from 'lucide-react';
 import styles from './FeatureCard.module.css';
 
 export type FeatureCardProps = {
@@ -24,7 +23,7 @@ export function FeatureCard({ eyebrow, title, description, href, icon, theme = '
         <p className={styles.description}>{description}</p>
       </div>
       <a className={styles.link} href={href} aria-label={`Explore ${title}`}>
-        Explore project <ArrowUpRight size={18} aria-hidden="true" />
+        Explore project <span aria-hidden="true">↗</span>
       </a>
     </article>
   );
